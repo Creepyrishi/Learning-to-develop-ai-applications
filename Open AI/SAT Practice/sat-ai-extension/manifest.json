@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "SAT AI Assistant",
+  "version": "1.0",
+  "description": "Explains SAT questions using AI",
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": ["https://satsuitequestionbank.collegeboard.org/*"],
+  "content_scripts": [
+    {
+      "resources": ["lib/marked.min.js"],
+      "matches": ["https://satsuitequestionbank.collegeboard.org/*"],
+      "js": ["lib/marked.min.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["lib/marked.min.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "action": {
+    "default_title": "SAT AI Assistant"
+  }
+}
