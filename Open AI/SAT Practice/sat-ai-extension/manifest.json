@@ -3,7 +3,7 @@
   "name": "SAT AI Assistant",
   "version": "1.0",
   "description": "Explains SAT questions using AI",
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["activeTab", "scripting", "storage"],
   "host_permissions": ["https://satsuitequestionbank.collegeboard.org/*"],
   "content_scripts": [
     {
@@ -20,6 +20,8 @@
     }
   ],
   "action": {
-    "default_title": "SAT AI Assistant"
+    "default_title": "SAT AI Assistant",
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
   }
 }

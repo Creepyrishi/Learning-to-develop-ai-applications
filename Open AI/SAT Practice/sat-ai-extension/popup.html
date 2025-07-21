@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>LLM Settings</title>
+  <style>
+    body { font-family: sans-serif; padding: 10px; width: 250px; }
+    input, select { width: 100%; margin: 5px 0; }
+    button { width: 100%; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h4>Configure LLM</h4>
+
+  <label for="apiKey">API Key:</label>
+  <input type="text" id="apiKey" placeholder="Enter API key">
+
+  <label for="modelSelect">Model:</label>
+  <select id="modelSelect">
+    <option value="llama-3.1-8b-instant">llama-3.1-8b-instant</option>
+    <option value="gemma2-9b-it">gemma2-9b-it</option>
+    <option value="deepseek-r1-distill-llama-70b">deepseek-r1-distill-llama-70b</option>
+  </select>
+
+  <button id="saveBtn">Save</button>
+
+  <p id="status" style="color: green;"></p>
+
+  <script src="popup.js"></script>
+</body>
+</html>
