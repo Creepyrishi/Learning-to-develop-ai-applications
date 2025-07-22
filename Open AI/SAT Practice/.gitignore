@@ -1,3 +1,5 @@
 .env
 prompts
 sat-ai-extension/lib/*
+instance/
+__pycache__

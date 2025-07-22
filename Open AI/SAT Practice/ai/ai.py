@@ -52,3 +52,17 @@ def get_explanation_stream(api, model, html):
     for chunk in response:
         if chunk.choices[0].delta.content is not None:
             yield (chunk.choices[0].delta.content)
+
+
+def chat_with_steam(api, messages, model):
+    client = create_client(api)
+
+    response = client.chat.completions.create(
+        messages=messages, 
+        model=model, 
+        stream=True
+    )
+
+    for chunk in response:
+        if chunk.choices[0].delta.content is not None:
+            yield chunk.choices[0].delta.content
