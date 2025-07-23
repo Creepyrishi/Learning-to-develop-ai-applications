@@ -1,27 +1,40 @@
 {
   "manifest_version": 3,
-  "name": "SAT AI Assistant",
+  "name": "SAT Suite AI Tutor",
   "version": "1.0",
-  "description": "Explains SAT questions using AI",
-  "permissions": ["activeTab", "scripting", "storage"],
-  "host_permissions": ["https://satsuitequestionbank.collegeboard.org/*"],
+  "description": "AI-powered question explanation and tutoring for SAT Suite question bank",
+  
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  
+  "host_permissions": [
+    "https://satsuitequestionbank.collegeboard.org/*",
+    "http://localhost:5000/*"
+  ],
+  
   "content_scripts": [
     {
-      "resources": ["lib/marked.min.js"],
       "matches": ["https://satsuitequestionbank.collegeboard.org/*"],
-      "js": ["lib/marked.min.js", "content.js"],
-      "run_at": "document_idle"
+      "js": [
+        "sidebar.js",
+        "content.js",
+        "lib/marked.min.js"
+      ],
+      "run_at": "document_end"
     }
   ],
+  
   "web_accessible_resources": [
     {
       "resources": ["lib/marked.min.js"],
-      "matches": ["<all_urls>"]
+      "matches": ["https://satsuitequestionbank.collegeboard.org/*"]
     }
   ],
+  
   "action": {
-    "default_title": "SAT AI Assistant",
     "default_popup": "popup.html",
-    "default_icon": "icon.png"
+    "default_title": "SAT Suite AI Tutor Settings"
   }
 }

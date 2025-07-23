@@ -1,11 +1,7 @@
 import re
 
 def preprocess(html):
-    print("============================================================================")
-    print(html)
     html = clean_html_with_re(html)
-    print("============================================================================")
-    print(html)
     return html
 
 def clean_html_with_re(html):

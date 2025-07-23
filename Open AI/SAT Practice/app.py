@@ -26,6 +26,7 @@ def explain_ext():
     data = request.get_json()
     api  = data.get("api")
     model = data.get("model")
+    question_id = data.get("question_id")
     html = data.get("html")
     subject = data.get("subject")
 
@@ -37,17 +38,21 @@ def explain_ext():
     else:
         html = reomve_html_attribute(html) 
     
-    session['html'] = html
-    session['subject'] = subject
+    if 'convo' not in session:
+        session['convo'] = {}
+
+    conversation = session['convo']
+    
+    if question_id not in conversation:
+        conversation[question_id] = get_explanation_prompt(html)
 
     return Response(stream_with_context(get_explanation_stream(api=api, model=model, html=html)), mimetype="text/plain")
 
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json()
-    question_id = data.get("question_id")
-    question= data.get("question")
     message = data.get("message")
+    question_id = data.get("question_id")
     api = data.get("api")
     model = data.get("model")
 
@@ -60,7 +65,6 @@ def chat():
         conversation[question_id] = [{"role": "system", "content": "You are a helpful assistant."}]
     
     conversation[question_id].append({"role": "user", "content": message} )
-
     messages = conversation[question_id]
     def generator():
         for chunk in chat_with_steam(api, messages, model):
