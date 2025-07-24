@@ -1,5 +1,28 @@
 // sidebar.js - Unified chat sidebar component
 
+// Function to save response to backend
+async function saveResponse(apiKey, questionId, response) {
+    try {
+        const saveResponse = await fetch("http://localhost:5000/save_response", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                api: apiKey,
+                question_id: questionId,
+                response: response
+            })
+        });
+        
+        if (saveResponse.ok) {
+            console.log("Response saved successfully");
+        } else {
+            console.error("Failed to save response:", saveResponse.status);
+        }
+    } catch (error) {
+        console.error("Error saving response:", error);
+    }
+}
+
 class AISidebar {
     constructor() {
         this.sidebar = null;
@@ -183,6 +206,9 @@ class AISidebar {
 
             const aiResponse = await response.text();
             this.addChatMessage(aiResponse, 'ai');
+            
+            // Save the response to backend
+            await saveResponse(apiKey, this.questionId, aiResponse);
         } catch (error) {
             console.error("Chat error:", error);
             this.addChatMessage("Sorry, I encountered an error. Please try again.", 'ai');

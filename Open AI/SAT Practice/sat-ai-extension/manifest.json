@@ -35,6 +35,7 @@
   
   "action": {
     "default_popup": "popup.html",
-    "default_title": "SAT Suite AI Tutor Settings"
+    "default_title": "SAT Suite AI Tutor",
+    "default_icon" : "icon.jpg"
   }
 }

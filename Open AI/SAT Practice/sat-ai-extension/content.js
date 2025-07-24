@@ -22,6 +22,48 @@ function waitForElement(selector, timeout = 5000) {
     });
 }
 
+// Function to save response to backend
+async function saveResponse(apiKey, questionId, response) {
+    try {
+        const saveResponse = await fetch("http://localhost:5000/save_response", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                api: apiKey,
+                question_id: questionId,
+                response: response
+            })
+        });
+        
+        if (saveResponse.ok) {
+            console.log("Response saved successfully");
+        } else {
+            console.error("Failed to save response:", saveResponse.status);
+        }
+    } catch (error) {
+        console.error("Error saving response:", error);
+    }
+}
+
+// Function to read streamed response
+async function readStreamedResponse(response) {
+    const reader = response.body.getReader();
+    let fullResponse = '';
+    
+    try {
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            
+            const chunk = new TextDecoder().decode(value);
+            fullResponse += chunk;
+        }
+        return fullResponse;
+    } finally {
+        reader.releaseLock();
+    }
+}
+
 // Setup listeners for question buttons
 function setupListeners(apiKey, model) {
     const buttons = document.querySelectorAll(".view-question-button");
@@ -54,8 +96,9 @@ function setupListeners(apiKey, model) {
                     try {
                         const questionEl = document.querySelector("#question-card");
                         const html = questionEl ? questionEl.outerHTML : "";
-                        const question_id = document.querySelector('h5.question-id').textContent.split(': ')[1]
+                        const question_id = document.querySelector('h5.question-id').textContent.split(': ')[1];
                         let subject = '';
+                        
                         // Get subject from headers
                         const headers = document.querySelectorAll('.question-banner .column-header');
                         headers.forEach(header => {
@@ -71,16 +114,20 @@ function setupListeners(apiKey, model) {
                             body: JSON.stringify({ 
                                 api: apiKey, 
                                 model: model || "llama-3.1-8b-instant",
-                                question_id : question_id, 
+                                question_id: question_id, 
                                 html, 
                                 subject 
                             })
                         });
 
-                        const explanation = await response.text();
+                        // Read the streamed response
+                        const explanation = await readStreamedResponse(response);
                         
                         // Display explanation in sidebar
                         await aiSidebar.displayExplanation(explanation);
+                        
+                        // Save the response to backend
+                        await saveResponse(apiKey, question_id, explanation);
                         
                     } catch (error) {
                         console.error("Explanation error:", error);
