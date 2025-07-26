@@ -77,15 +77,9 @@ function setupListeners(apiKey, model) {
                 const explainBtn = document.createElement("button");
                 explainBtn.innerText = "Explain with AI";
                 explainBtn.className = "ai-explain-button";
-                Object.assign(explainBtn.style, {
-                    marginTop: "10px",
-                    padding: "8px",
-                    backgroundColor: "#4CAF50",
-                    color: "white",
-                    border: "none",
-                    cursor: "pointer",
-                    borderRadius: "4px"
-                });
+
+                explainBtn.classList.add('cb-btn','square', 'cb-roboto', 'cb-btn-primary', 'cb-btn', 'cb-btn-primary', 'cb-roboto')
+
 
                 dialog.appendChild(explainBtn);
 
@@ -174,3 +168,51 @@ observer.observe(document.body, {
     childList: true, 
     subtree: true 
 });
+
+// --- Toggle Hide/View Button for Answer Section ---
+
+function injectToggleButtons() {
+    const pdfBtnContainers = document.querySelectorAll('.cb-dialog-content > .row > div');
+
+    pdfBtnContainers.forEach((container) => {
+        if (!container.querySelector('#toggleButton')) {
+            const toggleButton = document.createElement('button');
+            toggleButton.innerText = 'View Answer';
+            toggleButton.id = 'toggleButton';
+
+            // Style the button
+            toggleButton.classList.add('cb-btn','square', 'cb-roboto', 'cb-btn-primary', 'cb-btn', 'cb-btn-primary', 'cb-roboto')
+            toggleButton.style.marginTop = '10px';
+            toggleButton.style.marginRight = '10px';
+
+            // Append the button next to "Add to PDF"
+            container.insertBefore(toggleButton, container.firstChild);
+
+
+            // Hide answer-content by default
+            const answerSections = document.getElementsByClassName('answer-content');
+            Array.from(answerSections).forEach((el) => {
+                el.style.display = 'none';
+            });
+
+            // Toggle visibility on click
+            toggleButton.addEventListener('click', () => {
+                const answerSections = document.getElementsByClassName('answer-content');
+                Array.from(answerSections).forEach((el) => {
+                    const isHidden = el.style.display === 'none';
+                    el.style.display = isHidden ? 'block' : 'none';
+                    toggleButton.innerText = isHidden ? 'Hide Answer' : 'View Answer';
+                });
+            });
+        }
+    });
+}
+
+// Inject immediately on page load
+injectToggleButtons();
+
+// Observe for dynamically added dialogs
+const toggleObserver = new MutationObserver(() => {
+    injectToggleButtons();
+});
+toggleObserver.observe(document.body, { childList: true, subtree: true });
