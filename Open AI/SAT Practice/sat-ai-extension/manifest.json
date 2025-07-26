@@ -20,6 +20,7 @@
       "js": [
         "sidebar.js",
         "content.js",
+        "utils.js",
         "lib/marked.min.js"
       ],
       "run_at": "document_end"

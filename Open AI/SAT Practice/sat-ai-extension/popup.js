@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const saveBtn    = document.getElementById("saveBtn");
   const status     = document.getElementById("status");
 
+
   // 1) initial load
   chrome.storage.local.get(["apiKey","model"], data => {
     apiInput.value   = data.apiKey || "";

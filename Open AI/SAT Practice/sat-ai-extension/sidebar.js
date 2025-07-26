@@ -3,16 +3,19 @@
 // Function to save response to backend
 async function saveResponse(apiKey, questionId, response) {
     try {
+        const userId = await getOrCreateUserId();
+
         const saveResponse = await fetch("http://localhost:5000/save_response", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 api: apiKey,
                 question_id: questionId,
+                user_id: userId,
                 response: response
             })
         });
-        
+
         if (saveResponse.ok) {
             console.log("Response saved successfully");
         } else {
@@ -98,20 +101,20 @@ class AISidebar {
             
             <!-- Input Section -->
             <div style="display:flex; gap:5px; margin-bottom:8px;">
-                <input type="text" id="chatInput" placeholder="Ask a question about this problem..." style="
+                <input type="text" id="chatInput" placeholder="Click 'Explain with AI' to start" disabled style="
                     flex: 1;
                     padding: 8px;
                     border: 1px solid #ddd;
                     border-radius: 4px;
                     font-size: 14px;
                 ">
-                <button id="sendChatBtn" style="
+                <button id="sendChatBtn" disabled style="
                     padding: 8px 12px;
-                    background: #4caf50;
+                    background: #9e9e9e; /* Disabled color */
                     color: white;
                     border: none;
                     border-radius: 4px;
-                    cursor: pointer;
+                    cursor: not-allowed;
                     font-size: 14px;
                 ">Send</button>
             </div>
@@ -188,6 +191,8 @@ class AISidebar {
         const questionEl = document.querySelector("#question-card");
 
         try {
+            const userId = await getOrCreateUserId();
+
             // Get API settings
             const { apiKey, model } = await new Promise(resolve => {
                 chrome.storage.local.get(["apiKey", "model"], resolve);
@@ -200,13 +205,14 @@ class AISidebar {
                     api: apiKey,
                     model: model || "llama-3.1-8b-instant",
                     message,
+                    user_id: userId,
                     question_id: this.questionId
                 })
             });
 
             const aiResponse = await response.text();
             this.addChatMessage(aiResponse, 'ai');
-            
+
             // Save the response to backend
             await saveResponse(apiKey, this.questionId, aiResponse);
         } catch (error) {
@@ -279,12 +285,9 @@ class AISidebar {
     // Method to display explanation as first AI message
     async displayExplanation(content) {
         this.openSidebar();
-
-        // Clear any existing messages first
         this.clearChat();
 
         // Get question ID for reference
-        let questionId = '';
         const questionIdEl = document.querySelector(".question-id");
         if (questionIdEl) {
             const idText = questionIdEl.textContent.trim();
@@ -294,15 +297,27 @@ class AISidebar {
             await this.loadMdScript();
             this.addChatMessage(content, 'ai', true);
 
-            // Add a follow-up prompt to encourage questions
+            // Enable chat and add follow-up prompt
             setTimeout(() => {
-                const followUpMessage = questionId ?
-                    `Feel free to ask me any questions about this problem (ID: ${questionId})! I'm here to help you understand it better.` :
-                    `Feel free to ask me any questions about this problem! I'm here to help you understand it better.`;
+                const followUpMessage = `Feel free to ask me any questions about this problem (ID: ${this.questionId})! I'm here to help you understand it better.`;
                 this.addChatMessage(followUpMessage, 'ai');
+
+                const chatInput = document.getElementById('chatInput');
+                const sendBtn = document.getElementById('sendChatBtn');
+
+                if (chatInput && sendBtn) {
+                    chatInput.disabled = false;
+                    chatInput.placeholder = 'Ask a question about this problem...';
+
+                    sendBtn.disabled = false;
+                    sendBtn.style.background = '#4caf50'; // Restore original color
+                    sendBtn.style.cursor = 'pointer';
+                }
+
             }, 500);
         }
     }
+
 
     // Load markdown script
     async loadMdScript() {

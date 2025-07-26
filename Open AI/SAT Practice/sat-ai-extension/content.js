@@ -25,11 +25,15 @@ function waitForElement(selector, timeout = 5000) {
 // Function to save response to backend
 async function saveResponse(apiKey, questionId, response) {
     try {
+        const userId = await getOrCreateUserId();
+
+
         const saveResponse = await fetch("http://localhost:5000/save_response", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ 
                 api: apiKey,
+                user_id: userId,
                 question_id: questionId,
                 response: response
             })
@@ -87,7 +91,10 @@ function setupListeners(apiKey, model) {
                     explainBtn.innerText = 'Loading...';
                     explainBtn.disabled = true;
                     
+                    
                     try {
+                        const userId = await getOrCreateUserId();
+
                         const questionEl = document.querySelector("#question-card");
                         const html = questionEl ? questionEl.outerHTML : "";
                         const question_id = document.querySelector('h5.question-id').textContent.split(': ')[1];
@@ -107,6 +114,7 @@ function setupListeners(apiKey, model) {
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ 
                                 api: apiKey, 
+                                user_id: userId,
                                 model: model || "llama-3.1-8b-instant",
                                 question_id: question_id, 
                                 html, 
