@@ -5,7 +5,7 @@ async function saveResponse(apiKey, questionId, response) {
     try {
         const userId = await getOrCreateUserId();
 
-        const saveResponse = await fetch("http://localhost:5000/save_response", {
+        const saveResponse = await fetch("https://sat-practice-ext.vercel.app/save_response", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -198,7 +198,7 @@ class AISidebar {
                 chrome.storage.local.get(["apiKey", "model"], resolve);
             });
 
-            const response = await fetch("http://localhost:5000/chat", {
+            const response = await fetch("https://sat-practice-ext.vercel.app/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

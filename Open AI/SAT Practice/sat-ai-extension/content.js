@@ -28,7 +28,7 @@ async function saveResponse(apiKey, questionId, response) {
         const userId = await getOrCreateUserId();
 
 
-        const saveResponse = await fetch("http://localhost:5000/save_response", {
+        const saveResponse = await fetch("https://sat-practice-ext.vercel.app/save_response", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ 
@@ -109,7 +109,7 @@ function setupListeners(apiKey, model) {
                         });
 
                         // Make API call to get explanation
-                        const response = await fetch("http://localhost:5000/explain", {
+                        const response = await fetch("https://sat-practice-ext.vercel.app/explain", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ 

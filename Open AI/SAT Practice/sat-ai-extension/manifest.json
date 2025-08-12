@@ -11,7 +11,8 @@
   
   "host_permissions": [
     "https://satsuitequestionbank.collegeboard.org/*",
-    "http://localhost:5000/*"
+    "http://localhost:5000/*",
+    "https://sat-practice-ext.vercel.app/*"
   ],
   
   "content_scripts": [
@@ -33,10 +34,12 @@
       "matches": ["https://satsuitequestionbank.collegeboard.org/*"]
     }
   ],
-  
+  "icons": {
+  "128": "icon.png"
+},
   "action": {
     "default_popup": "popup.html",
     "default_title": "SAT Suite AI Tutor",
-    "default_icon" : "icon.jpg"
+    "default_icon" : "icon.png"
   }
 }

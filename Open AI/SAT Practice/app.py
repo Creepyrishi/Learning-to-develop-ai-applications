@@ -4,12 +4,20 @@ from flask_cors import CORS
 from utils import *
 from ai import *
 from db import *
+from db import get_chat, create_document, update_chat, user_collection
+
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
-CORS(app)
 
-from db import get_chat, create_document, update_chat, user_collection
+CORS(app, origins=["https://satsuitequestionbank.collegeboard.org"])
+
+
+@app.before_request
+def restrict_origin():
+    origin = request.headers.get("Origin")
+    if not origin or not origin.startswith("https://satsuitequestionbank.collegeboard.org"):
+        return jsonify({"error": "Access denied"}), 403
 
 @app.route("/explain", methods=["POST"])
 def explain_ext():
